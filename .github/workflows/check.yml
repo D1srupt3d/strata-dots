@@ -1,0 +1,39 @@
+# Catches a broken dots.toml, an undefined {{var}}, or a typo'd layer before
+# it reaches your machines: runs a dry-run apply into a throwaway home on
+# Linux and macOS, for every role layer.
+name: check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        layers: ["", "work"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install strata (signed release)
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/D1srupt3d/strata/main/get.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Dry-run apply
+        env:
+          STRATA_HOME: ${{ runner.temp }}/home
+          STRATA_CONFIG: ${{ runner.temp }}/machine.toml
+          STRATA_STATE: ${{ runner.temp }}/state.json
+          LAYERS: ${{ matrix.layers }}
+        run: |
+          mkdir -p "$STRATA_HOME"
+          printf 'repo = "%s"\nlayers = [%s]\n' "$GITHUB_WORKSPACE" "${LAYERS:+\"$LAYERS\"}" > "$STRATA_CONFIG"
+          cat "$STRATA_CONFIG"
+          strata apply --dry-run

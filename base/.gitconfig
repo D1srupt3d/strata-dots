@@ -1,0 +1,15 @@
+# Name and email come from [vars] in dots.toml — override them per machine in
+# ~/.config/strata/machine.toml instead of copying this file into a layer.
+[user]
+	name = {{git_name}}
+	email = {{git_email}}
+[init]
+	defaultBranch = main
+[pull]
+	ff = only
+[core]
+	excludesfile = ~/.config/git/ignore
+# Machine-private settings (signing keys, credential helpers) that shouldn't be
+# in a shared repo. git silently skips this if the file doesn't exist.
+[include]
+	path = ~/.gitconfig.local

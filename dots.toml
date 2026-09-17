@@ -1,0 +1,30 @@
+# strata repo config. Every section is optional — delete what you don't use.
+# Full reference: https://github.com/D1srupt3d/strata#configuration-reference
+#
+# TOML rule: top-level keys (substitute, ignore) must come BEFORE any [section].
+
+# Files that get {{var}} tokens replaced. Everything else is copied
+# byte-for-byte, so shell ${VARS} and other tools' {{ }} are never touched.
+substitute = [".gitconfig"]
+
+# Paths inside a layer that strata should never manage.
+ignore = ["**/*.swp"]
+
+# Defaults for every machine. Override per machine under [vars] in
+# ~/.config/strata/machine.toml (strata init lists the ones you haven't).
+[vars]
+git_name = "Your Name"
+git_email = "you@example.com"
+
+# glob → octal mode. git only stores the executable bit, so private files
+# need a rule here. The longest (most specific) matching pattern wins.
+[permissions]
+".ssh/**" = "600"
+
+# Command to run (in $HOME) after apply writes that file. Only runs when the
+# file actually changed; a failing hook is retried on the next apply.
+[hooks]
+".config/shell/aliases.sh" = 'echo "aliases changed — open a new shell to load them"'
+# Uncomment on a Mac to install mac/.Brewfile whenever it changes.
+# Left off so ./try.sh never installs packages behind your back.
+# ".Brewfile" = 'command -v brew >/dev/null || exit 0; brew bundle --file="$HOME/.Brewfile"'

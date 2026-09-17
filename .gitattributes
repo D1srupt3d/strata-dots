@@ -1,0 +1,5 @@
+# strata copies files byte-for-byte. Without this, git on Windows checks files
+# out with CRLF line endings, which breaks shell scripts on Linux/macOS/WSL.
+* text=auto eol=lf
+*.jpg binary
+*.png binary

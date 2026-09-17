@@ -1,0 +1,7 @@
+# Global gitignore — applies to every repo on the machine.
+.DS_Store
+*.swp
+*~
+.env
+.envrc
+.direnv/
